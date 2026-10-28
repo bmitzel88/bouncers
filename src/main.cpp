@@ -9,6 +9,7 @@
 
 #include "bn_random.h"
 #include "bn_sprite_items_dot.h"
+#include "bn_sprite_items_newdot.h"
 
 // Set max/min x position to be the edges of the display
 static constexpr int HALF_SCREEN_WIDTH = bn::display::width() / 2;
@@ -32,8 +33,10 @@ public:
     bn::fixed x_speed;
     bn::fixed y_speed;
 
+    int timer = 720; // 12 seconds
+
     // constructor
-    Bouncer(bn::fixed x_start, bn::fixed y_start, int random_x, int random_y) : sprite(bn::sprite_items::dot.create_sprite(x_start, y_start)),
+    Bouncer(bn::fixed x_start, bn::fixed y_start, int random_x, int random_y) : sprite(bn::sprite_items::newdot.create_sprite(x_start, y_start)),
                                                                                 x_speed(random_x),
                                                                                 y_speed(random_y)
     {
@@ -81,6 +84,15 @@ public:
 
         sprite.set_x(x);
         sprite.set_y(y);
+
+        // Decrement the timer every frame
+        --timer;
+    }
+
+    // Check to see if the timer has run out
+    bool isExpired()
+    {
+        return timer <= 0;
     }
 
 private:
@@ -125,6 +137,21 @@ void add_bouncer(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers, bn::fixed start_x,
     }
 }
 
+void delete_expired_bouncers(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers)
+{
+    for (int i = 0; i < bouncers.size();)
+    {
+        if (bouncers[i].isExpired())
+        {
+            bouncers.erase(bouncers.begin() + i);
+        }
+        else
+        {
+            i++;
+        }
+    }
+}
+
 int main()
 {
     bn::core::init();
@@ -157,6 +184,9 @@ int main()
         {
             b.update();
         }
+
+        // If any bouncers are 12 seconds old, erase them
+        delete_expired_bouncers(bouncers);
 
         y_spawn += 1;
 
