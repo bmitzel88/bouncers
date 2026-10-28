@@ -64,22 +64,22 @@ public:
 private:
 };
 
-bn::fixed average_x(bn::vector<bn::sprite_ptr, MAX_BOUNCERS> &sprites)
+bn::fixed average_x(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers)
 {
     // Add all x positions together
     bn::fixed x_sum = 0;
-    for (bn::sprite_ptr sprite : sprites)
+    for (Bouncer &b : bouncers)
     {
-        x_sum += sprite.x();
+        x_sum += b.sprite.x();
     }
 
     bn::fixed x_average = x_sum;
 
     // Only divide if we have 1 or more
     // Prevents division by 0
-    if (sprites.size() > 0)
+    if (bouncers.size() > 0)
     {
-        x_average /= sprites.size();
+        x_average /= bouncers.size();
     }
 
     return x_average;
@@ -133,34 +133,6 @@ int main()
         {
             y_spawn = MIN_Y;
         }
-
-        // for each bouncer
-        // for (int i = 0; i < sprites.size(); i++)
-        // {
-        //     bn::sprite_ptr sprite = sprites[i];
-
-        //     bn::fixed x = sprite.x();
-
-        //     // Update x position by adding speed
-        //     x += x_speeds[i];
-
-        //     // If we've gone off the screen on the right
-        //     if (x > MAX_X)
-        //     {
-        //         // Snap back to screen and reverse direction
-        //         x = MAX_X;
-        //         x_speeds[i] *= -1;
-        //     }
-        //     // If we've gone off the screen on the left
-        //     if (x < MIN_X)
-        //     {
-        //         // Snap back to screen and reverse direction
-        //         x = MIN_X;
-        //         x_speeds[i] *= -1;
-        //     }
-
-        //     sprite.set_x(x);
-        // }
 
         bn::core::update();
     }
