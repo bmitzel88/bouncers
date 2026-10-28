@@ -7,6 +7,7 @@
 #include <bn_vector.h>
 #include <bn_log.h>
 
+#include "bn_random.h"
 #include "bn_sprite_items_dot.h"
 
 // Set max/min x position to be the edges of the display
@@ -32,9 +33,9 @@ public:
     bn::fixed y_speed;
 
     // constructor
-    Bouncer(bn::fixed x_start, bn::fixed y_start) : sprite(bn::sprite_items::dot.create_sprite(x_start, y_start)),
-                                                    x_speed(BASE_SPEED),
-                                                    y_speed(BASE_SPEED)
+    Bouncer(bn::fixed x_start, bn::fixed y_start, int random_x, int random_y) : sprite(bn::sprite_items::dot.create_sprite(x_start, y_start)),
+                                                                                x_speed(random_x),
+                                                                                y_speed(random_y)
     {
     }
 
@@ -85,6 +86,12 @@ public:
 private:
 };
 
+int getRandomNumber()
+{
+    static bn::random random;
+    return random.get_int(1, 6);
+}
+
 bn::fixed average_x(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers)
 {
     // Add all x positions together
@@ -108,10 +115,13 @@ bn::fixed average_x(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers)
 
 void add_bouncer(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers, bn::fixed start_x, bn::fixed start_y)
 {
+
+    int random_x = getRandomNumber();
+    int random_y = getRandomNumber();
     // Only add if we're below the maximum
     if (bouncers.size() < bouncers.max_size())
     {
-        bouncers.push_back(Bouncer(start_x, start_y));
+        bouncers.push_back(Bouncer(start_x, start_y, random_x, random_y));
     }
 }
 
